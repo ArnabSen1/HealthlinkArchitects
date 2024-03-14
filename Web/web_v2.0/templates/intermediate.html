@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Registration Forms</title>
+    <!-- <title>Registration Forms</title> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            background-image: url('https://www.dropbox.com/scl/fi/h2r1etswo38kt3dknzzkj/ambulance.png?rlkey=w75kxcdfty0fhpoui1iytbtq7&dl=1');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Add an overlay with transparency */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #registration-box {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            max-width: 400px; /* Set a maximum width for the registration box */
+            width: 100%; /* Take 100% width within the max-width */
+            margin: auto; /* Center the registration box horizontally */
+        }
+
+        #intro h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: highlight 3s ease-in-out infinite;
+        }
+
+        @keyframes highlight {
+            0%, 100% {
+                background-color: transparent;
+                color: black;
+            }
+            50% {
+                background-color: #007BFF;
+                color: white;
+            }
+        }
+
+        #intro p {
+            font-size: 25px;
+            margin-bottom: 30px;
+        }
+
+        #get-started-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .registration-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .registration-button:hover, #get-started-button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0; /* Adjust the left and right padding to 0 */
+            background-color: #192024;
+            color: white;
+        }
+
+        footer a {
+            width: 100%;
+            text-decoration: none;
+            margin: 0 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <div id="registration-box">
+        <h2>Select an option:</h2>
+        <!-- Registration buttons -->
+        
+        <button class="registration-button" onclick="redirectTo('signup')">Sign Up </button>
+        <button class="registration-button" onclick="redirectTo('loginpage')">Login </button>
+    </div>
+    <footer>
+        &copy; Copyright @ LifeSaver Architech
+        <a href="{{ url_for('contactus')}}">Contact Us</a>
+        <a href="{{ url_for('aboutus')}}">About Us</a>
+    </footer>
+</div>
+    <script>
+        // JavaScript function to redirect to the desired registration page
+        function redirectTo(page) {
+            if (page === 'signup') {
+                window.location.href = "{{ url_for('signup') }}"; // Replace with the actual URL for user registration
+            } else if (page === 'loginpage') {
+                window.location.href = "{{ url_for('loginpage') }}"; // Replace with the actual URL for ambulance registration
+            } 
+        }
+    </script>
+    
+</body>
+</html>

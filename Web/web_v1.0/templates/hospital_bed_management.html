@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hospital Bed Management</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6SURGERYiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous">
+            <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+        <style>
+            #hs {
+                font-size: larger;
+                font-weight: bolder;
+                text-align: center;
+            }
+
+            body {
+                background-color: rgb(123, 199, 174);
+            }
+
+            .hospital_info {
+                display: flex;
+                justify-content: center; /* Center horizontally */
+                align-items: center; /* Center vertically */
+                /* height: 100vh; Set a height to center vertically within the viewport */
+            }
+
+            table {
+                width: 100%;
+                margin: 40px auto;
+                background-color: aliceblue;
+            }
+
+            table.list {
+
+                text-align: center;
+                width: 100%;
+            }
+
+            td {
+                border: 1px solid rgb(204, 200, 200);
+                text-align: left;
+                padding: 8px 15px;
+            }
+
+            tr:nth-child(even),
+            table.list thread>tr {
+                background-color: rgb(201, 200, 204);
+            }
+
+            input[type="text"],
+            input[type="numbeer"] {
+                width: 91%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                /* border: 1px solid rSURGERY(165,161,161); */
+                border-radius: 4px;
+            }
+
+            input[type="submit"],
+            input[type="reset"] {
+                /* background: #eee; */
+                padding:6px 12px;
+                margin:15px 0 10px;
+                display: inline-block;
+                background-color: #007BFF;
+                color: #fff;
+                border: none;
+                font-size: 1rem;
+                cursor: pointer;
+                border-radius: 30px;
+                outline: none;
+            }
+
+            input[type="submit"]:hover {
+                background: #4b99d8;
+            }
+
+            input[type="reset"]:hover {
+                background: #4b99d8;
+            }
+
+            button {
+                background-color: #007BFF;
+                color: #fff;
+                display: inline-block;
+                border: none;
+                padding:6px 12px;
+                font-size: 1rem;
+                cursor: pointer;
+                border-radius: 30px;
+                margin:15px 0 10px;
+                outline: none;
+            }
+
+            button:hover {
+                background: #4b99d8;
+            }
+
+            #confirm_from {
+                background-color: #007BFF;
+                color: #fff;
+                border: none;
+                padding: 15px 15px;
+                font-size: 20px;
+                cursor: pointer;
+                border-radius: 8px;
+                margin: 8px 0;
+                position: absolute;
+                left: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('hospital_notification', username=username, password=password) }}">Notification Centre<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('hospital_bed_management', username=username, password=password) }}">Edit Availability</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <p style="display: none;">
+            {% if username %}
+                {{username}}
+            {% endif %}
+            {% if password %}
+                {{password}}
+            {% endif %}
+        </p>
+        <div class="hospital_info"><h1>Information About the hospital beds<span id="hospital"></span></h1></div>
+        <table>
+            <tr>
+                <td>
+                    <form action="/hospital_bed_management/{{ username }}/{{ password }}" method="POST">
+                    <div>
+                        <label for="ORTHO">Orthopedic Beds</label>
+                        <input type="number" name="ORTHO" id="ORTHO" value="{{ hosp_data['ORTHO'] }}" min="0">
+                    
+                        <label for="GYNE">Gynocology Beds</label>
+                        <input type="number" name="GYNE" id="GYNE" value="{{ hosp_data['GYNE'] }}" min="0">
+                    </div>
+                    <div>
+                        <label for="CARDIO">Cardical Specialist Beds</label>
+                        <input type="number" name="CARDIO" id="CARDIO" value="{{ hosp_data['CARDIO'] }}" min="0">
+                    
+                        <label for="PULMO">Pulmonology Beds</label>
+                        <input type="number" name="PULMO" id="PULMO" value="{{ hosp_data['PULMO'] }}" min="0">
+                    </div>
+                    <div>
+                        <label for="OPTHALMO">Opthalmonology Beds</label>
+                        <input type="number" name="OPTHALMO" id="OPTHALMO" value="{{ hosp_data['OPTHALMO'] }}" min="0">
+                    
+                        <label for="SURGERY">Surgery Beds</label>
+                        <input type="number" name="SURGERY" id="SURGERY" value="{{ hosp_data['SURGERY'] }}" min="0">
+                    </div>
+                    <div>
+                        <label for="MEDICINE">Medication</label>
+                        <input type="number" name="MEDICINE" id="MEDICINE" value="{{ hosp_data['MEDICINE'] }}" min="0">
+                    
+                        <label for="EMERGENCY">Emergency Beds</label>
+                        <input type="number" name="EMERGENCY" id="EMERGENCY" value="{{ hosp_data['EMERGENCY'] }}" min="0">
+                    </div>
+                        <button type="submit">submit</button>
+                    </form>
+                </td> 
+            </tr>
+        </table>
+    </body>
+</html>

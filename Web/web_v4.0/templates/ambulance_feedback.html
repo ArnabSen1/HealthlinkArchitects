@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Font Awesome Icon Library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Potta+One&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 6.25vmax;
+}
+
+@media (max-width: 992px) {
+  html {
+    font-size: 60px;
+  }
+}
+
+body {
+  min-height: 100vh;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #222;
+  font-size: 0.24rem;
+  font-family: "Space Grotesk", sans-serif;
+  /* Updated background color */
+  background-color: #0206066e;
+}
+
+.feedback-wrapper {
+  width: 6rem;
+  padding: 0.3rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 0.25rem;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.2);
+  /* Updated background color */
+  background-color: #0206066e;
+  z-index: 1;
+}
+
+.feedback-wrapper .feedback-title {
+  font-weight: bold;
+  font-size: 0.36rem;
+}
+
+.feedback-wrapper .feedback-content {
+  line-height: 1.6;
+  /* color: #555; */
+}
+
+.feedback-rate-box {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0.1rem;
+}
+
+.feedback-rate-box input {
+  display: none;
+}
+
+.feedback-rate-box input:hover ~ .feedback-star:before {
+  color: rgba(255, 204, 51, 0.5);
+}
+
+.feedback-rate-box input:active + .feedback-star:before {
+  transform: scale(0.9);
+}
+
+.feedback-rate-box input:checked ~ .feedback-star:before {
+  color: #ffcc33;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.8);
+}
+
+.feedback-rate-box .feedback-star:before {
+  content: "★";
+  display: inline-block;
+  font-family: "Potta One", cursive;
+  font-size: 0.6rem;
+  cursor: pointer;
+  color: #0000;
+  text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.5);
+  background-color: #aaa;
+  background-clip: text;
+  -webkit-background-clip: text;
+  transition: all 0.3s;
+}
+
+textarea {
+  border: none;
+  resize: none;
+  width: 100%;
+  padding: 0.2rem;
+  color: inherit;
+  font-family: inherit;
+  line-height: 1.5;
+  border-radius: 0.2rem;
+  box-shadow: inset 2px 2px 8px rgba(0, 0, 0, 0.3), inset -2px -2px 8px rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+textarea::placeholder {
+  color: #aaa;
+}
+
+textarea:focus {
+  outline-color: #ffcc33;
+}
+
+.feedback-submit-btn {
+  padding: 0.2rem 0.5rem;
+  box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3), -3px -3px 8px rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  cursor: pointer;
+  background-color: #ffcc33;
+  transition: all 0.2s;
+}
+
+.feedback-submit-btn:active {
+  transform: translate(2px, 2px);
+}
+</style>
+</head>
+<body>
+  <form method="POST" action="{{ url_for('ambulance_feedback', user_username=user_username, username=username, password=password) }}">
+    <div class="feedback-wrapper"> 
+        <div class="feedback-title">Rate your experience</div>
+        <div class="feedback-content">We highly value your feedback! Kindly take a moment to rate your experience and provide us with your valuable feedback.</div>
+        <div class="feedback-rate-box">
+          <input type="hidden" name="username" value="{{ username }}">
+          <input type="hidden" name="password" value="{{ password }}">
+          <input type="hidden" name="user_username" value="{{ user_username }}">
+          <input type="radio" name="feedback-star" id="feedback-star0" value="0"/>
+          <label class="feedback-star" for="feedback-star0"></label>
+          <input type="radio" name="feedback-star" id="feedback-star1" value="1"/>
+          <label class="feedback-star" for="feedback-star1"></label>
+          <input type="radio" name="feedback-star" id="feedback-star2" value="2" checked="checked"/>
+          <label class="feedback-star" for="feedback-star2"></label>
+          <input type="radio" name="feedback-star" id="feedback-star3" value="3"/>
+          <label class="feedback-star" for="feedback-star3"></label>
+          <input type="radio" name="feedback-star" id="feedback-star4" value="4"/>
+          <label class="feedback-star" for="feedback-star4"></label>
+        </div>
+        <textarea name="feedback-text" cols="30" rows="6" placeholder="Tell us about your experience!"></textarea>
+        <button type="submit" class="feedback-submit-btn">Send</button>
+    </div>
+  </form>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Life Saver Architects</title>
+    <style>
+        /* Add your CSS styles here to customize the page's appearance */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .content-box {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Add a media query for screens smaller than 768px (typical mobile devices) */
+        @media screen and (max-width: 768px) and (max-height: 1024px) and (orientation: portrait) {
+            /* Your responsive CSS styles for screens within this specific range */
+            body {
+                font-size: 16px; /* Decrease the font size for smaller screens */
+            }
+
+            header {
+                padding: 10px; /* Reduce header padding on small screens */
+            }
+
+            .container {
+                padding: 10px; /* Reduce container padding on small screens */
+            }
+
+            .content-box {
+                padding: 10px; /* Reduce content box padding on small screens */
+            }
+
+            /* Add more specific styling for screens within this range as needed */
+
+            /* Example: center align text in headers on small screens */
+            h1, h2 {
+                text-align: center;
+            }
+
+            /* Example: increase the line-height for better readability on small screens */
+            p {
+                line-height: 1.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>About Us</h1>
+    </header>
+    <div class="container">
+        <div class="content-box"> <!-- Added a new div for the white box -->
+            <h2>Who We Are</h2>
+            <p>Welcome to Life Saver Architects! We are a leading technology company dedicated to providing automated ambulance and hospital booking services in terms of scheduled services and emergency services to our clients. With a passion for technology and a commitment to excellence, we are serving businesses of local sizes since September, 2023.</p>
+
+            <h2>Our Mission</h2>
+            <p>Our mission is to cater the needs of the people in the situations of emergency, where we can provided fastest assistance with cutting-edge technology solutions to the patients that drive growth, efficiency, and success. We strive to understand the unique needs of each client and tailor our services to exceed their expectations.</p>
+
+            <h2>Our Team</h2>
+            <p>At Life Saver Architects, our team consists of students who their best to impart the technologies required for this project as per their knowledge in the required fields. From software developers to database connoisseur, our diverse team, works collaboratively to deliver the best results for our clients.</p>
+
+            <h2>Why Choose Us</h2>
+            <p>When you choose Life Saver Architects, you are choosing a partner dedicated to your success. Here are a few reasons to consider us:</p>
+            <ul>
+                <li>Always availabe to cater the customers need and requirements.</li>
+                <li>Provide solutions tailored to your needs.</li>
+                <li>Exceptional customer service.</li>
+                <li>Always at your service, at times of needs.</li>
+                <li>Continuous commitment to innovation</li>
+            </ul>
+
+            <h2>Contact Us</h2>
+            <p>If you have any questions or would like to learn more about our services, please don't hesitate to <a href="{{ url_for('contactus')}}">contact us</a>. We look forward to working with you!</p>
+
+            <h1>Thank you for choosing us!!!</h1>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        width: 100%;
+        height: 60vh;
+      }
+    </style>
+    <!-- Include the Google Maps JavaScript API with your API key -->
+    <!-- <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcMwEC4-gAjl9MT19G2Rq-FG124gu8Kss&libraries=places&callback=initMap"></script> -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcMwEC4-gAjl9MT19G2Rq-FG124gu8Kss&callback=initMap" async defer></script> -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcMwEC4-gAjl9MT19G2Rq-FG124gu8Kss&callback=initMap"></script> -->
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbwtf_dATwlZNIgG6UqcVrPwsFheNK0os&callback=initMap"
+      defer
+    ></script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <form action="user_map/{{username}}" method="POST">
+      <!-- <label for="username">Username</label>
+      <input type="text" id="username" name="username" required>
+      <button type="submit">Submit</button> -->
+    </form>
+    <!-- Use data attributes to store latitude and longitude -->
+    <input
+      type="hidden"
+      id="user_latitude"
+      name="user_latitude"
+      data-value="{{user_latitude}}"
+      readonly
+    />
+    <input
+      type="hidden"
+      id="user_longitude"
+      name="user_longitude"
+      data-value="{{user_longitude}}"
+    />
+    <input
+      type="hidden"
+      id="ambulance_latitude"
+      name="ambulance_latitude"
+      data-value="{{ambulance_latitude}}"
+    />
+    <input
+      type="hidden"
+      id="ambulance_longitude"
+      name="ambulance_longitude"
+      data-value="{{ambulance_longitude}}"
+    />
+    <script>
+      var map;
+      var directionsService;
+      var directionsRenderer;
+
+      function initMap() {
+        // Retrieve latitude and longitude from data attributes
+        var user_latitude = parseFloat(
+          document.getElementById("user_latitude").getAttribute("data-value")
+        );
+        var user_longitude = parseFloat(
+          document.getElementById("user_longitude").getAttribute("data-value")
+        );
+        var ambulance_latitude = parseFloat(
+          document
+            .getElementById("ambulance_latitude")
+            .getAttribute("data-value")
+        );
+        var ambulance_longitude = parseFloat(
+          document
+            .getElementById("ambulance_longitude")
+            .getAttribute("data-value")
+        );
+
+        // map = new google.maps.Map(document.getElementById("map"), {
+        //   center: { lat: ambulance_latitude, lng: ambulance_longitude },
+        //   zoom: 11,
+        // });
+        async function initMap() {
+          // const { Map } = await google.maps.importLibrary("maps");
+
+          map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: ambulance_latitude, lng: ambulance_longitude },
+            zoom: 11,
+          });
+        }
+
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+
+        var startLatLng = new google.maps.LatLng(
+          ambulance_latitude,
+          ambulance_longitude
+        );
+        var endLatLng = new google.maps.LatLng(user_latitude, user_longitude);
+
+        var request = {
+          origin: startLatLng,
+          destination: endLatLng,
+          travelMode: google.maps.TravelMode.DRIVING,
+        };
+
+        directionsService.route(request, function (result, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setDirections(result);
+          }
+        });
+      }
+      setInterval(function () {
+        location.reload();
+      }, 39000);
+    </script>
+  </body>
+</html>

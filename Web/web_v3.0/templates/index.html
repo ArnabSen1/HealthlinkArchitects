@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Index Page</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Add this property */
+            background-color: #f0f0f0; /* Fallback background color */
+            background-image: url('https://www.dropbox.com/scl/fi/fl0j47hdi2i9vuz1mgzha/medical-emergency.jpeg?rlkey=x2f1giwj9lreaz3dv476w84uw&dl=1'); /* Background image URL */
+            background-size: 70%;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Add an overlay with transparency */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity (0.8 = 80% transparent) */
+            z-index: -1;
+        }
+
+        #intro {
+            text-align: center;
+            margin-top: 230px;
+        }
+
+        #intro h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: highlight 3s ease-in-out infinite;
+        }
+
+        @keyframes highlight {
+            0%, 100% {
+                background-color: transparent;
+                color: black;
+            }
+            50% {
+                background-color: #007BFF;
+                color: white;
+            }
+        }
+
+        #intro p {
+            font-size: 25px;
+            margin-bottom: 30px;
+        }
+
+        #get-started-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Add transition for smooth color change */
+        }
+
+        /* Style buttons for registration options */
+        .registration-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        /* Change button color on hover */
+        #get-started-button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: #192024;
+            color: white;
+        }
+
+        footer a {
+            text-decoration: none;
+            margin: 0 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="intro">
+        <h1>LifeSaver Connect</h1>
+        <p>Saving Lives...</p>
+        <!-- Registration buttons -->
+        <button id="get-started-button" onclick="redirectTo('intermediate')">Get Started</button>
+    </div>
+    <footer>
+        &copy; Copyright @ LifeSaver Architech
+        <a href="{{ url_for('contactus')}}">Contact Us</a>
+        <a href="{{ url_for('aboutus')}}">About Us</a>
+    </footer>
+
+    <script>
+        // JavaScript function to show registration options
+
+        // JavaScript function to redirect to the desired registration page
+        function redirectTo(page) {
+            if (page === 'intermediate') {
+                window.location.href = "{{ url_for('intermediate') }}"; // Replace with the actual URL for user registration
+            } 
+        }
+    </script>
+    
+</body>
+</html>

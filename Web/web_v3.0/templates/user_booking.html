@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ambulance Booking</title>
+
+  <!-- leaflet css -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" /> -->
+  <!-- leaflet-routing-machine css -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.3.4/dist/leaflet-routing-machine.css" /> -->
+
+  <style>
+    select{
+      height: 40px;
+      width: 500px;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-size: 1.5rem;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      /* Adjust this as needed */
+      align-items: flex-start;
+      /* Adjust this as needed */
+    }
+
+    .booking-form {
+      /* Adjust width and other styles for your form as needed */
+      width: 40%;
+      margin: 20px;
+      padding: 20px;
+      border: 2px solid red;
+      border-radius: 2%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #map {
+      /* Adjust width and other styles for your map as needed */
+      width: 60%;
+      height: 80vh;
+      margin: 2rem;
+      border: 2px solid black;
+      border-radius: 2%;
+    }
+
+    .direction-arrow {
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      transform: rotate(0deg);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* .booking-form {
+      width: 40%;
+      margin: 20px;
+      padding: 20px;
+      border: 2px solid red;
+      border-radius: 2%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+
+    } */
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="time"] {
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 1.2rem;
+    }
+
+    input[type="radio"] {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    footer {
+      text-align: center;
+      /* margin-top: 20px; */
+      padding: 2rem;
+      background-color: #192024;
+      color: white;
+    }
+
+    footer a {
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 300px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      padding: 5px;
+      z-index: 1;
+    }
+
+    .dropdown-content label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .dropdown-content label input {
+      margin-right: 5px;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    @media screen and (max-width: 768px), (max-height: 1024px), (orientation: portrait) {
+      /* Your responsive CSS styles for Android phones here */
+
+      body {
+        font-size: 1rem; /* Decrease the font size for smaller screens */
+      }
+
+      .container {
+        flex-direction: column; /* Stack the map and form vertically on small screens */
+      }
+
+      #map {
+        width: 100%; /* Make the map take up the full width of the screen */
+        height: 50vh; /* Reduce the map height on small screens */
+        margin: 1rem 0; /* Adjust margin for better spacing */
+      }
+
+      .booking-form {
+        width: 80%; /* Widen the form for better readability on small screens */
+        margin: 1rem auto; /* Center the form horizontally */
+      }
+
+      /* Add more specific styling for smaller screens as needed */
+
+      /* Example: hide the dropdown content by default on small screens */
+      .dropdown-content {
+        display: none;
+      }
+
+      /* Example: display the dropdown content on hover for small screens */
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<script defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbwtf_dATwlZNIgG6UqcVrPwsFheNK0os&libraries=places"></script>
+
+<body>
+  <header>
+    <h1>Ambulance Booking</h1>
+  </header>
+  <div class="container">
+    <div id="map"></div>
+    {% for items in devices %}
+    <span id="variable" value="{{items}}">{{items}}</span>
+    {% endfor %}
+    <div class="booking-form" id="myForm">
+      <h2>Book an Ambulance</h2>
+      <div id="credentials">
+        <!-- <p id="username">
+          {% if username %}
+          {{username}}
+          {% endif %}
+        </p>
+        
+          <p id="password">
+              {% if password %}
+              {{password}}
+              {% endif %}
+            </p> -->
+      </div>
+      <form method="POST" action="{{ url_for('user_booking', username=username, password=password) }}">
+
+        <input type="hidden" name="username" value="{{ username }}">
+        <input type="hidden" name="password" value="{{ password }}">
+
+        <!-- <label for="reason">Reason:</label> -->
+        <label class="index" for="reason">Select Reason:</label>
+        <!-- <input type="text" id="reason" name="reason" required /> -->
+
+          <!-- <select id="medicalNeed" name="medicalNeed">
+              {% for category in medical_categories %}
+                  <option value="{{ category }}">{{ category }}</option>
+              {% endfor %}
+          </select> -->
+          <select id="reason" name="reason">
+              <option value="ORTHO">Orthopedic</option>
+              <option value="CARDIO">Cardiology</option>
+              <option value="GYNE">Gyneology</option>
+              <option value="PULMO">Pulmonology</option>
+              <option value="OPTHALMO">Ophthalmologist</option>
+              <option value="SURGERY">SURGERY</option>
+              <option value="MEDICINE">MEDICINE</option>
+              <option value="EMERGENCY">EMERGENCY</option> Add more medical needs as needed
+          </select>
+        <input type="hidden" id="latitude" name="latitude" required />
+
+        <input type="hidden" id="longitude" name="longitude" required />
+
+        <input type="hidden" id="location" name="location" required />
+
+        <input type="hidden" id="date" name="date" />
+
+        <input type="hidden" id="time" name="time" />
+
+        <label for="bookingType">Booking Type:</label>
+        <input type="radio" id="scheduled" name="bookingType" value="Scheduled" />
+        <label for="scheduled">Scheduled</label>
+
+        <div id="hospital-dropdown" style="display:none;">
+          <!-- <form action="/user_booking" method="POST"> -->
+          <!-- <select id="nameDropdown" multiple>
+              {% for name in names %}
+              <option>{{ name }}</option>
+              {% endfor %}
+            </select> -->
+
+          <div class="dropdown">
+            <span>Select Items:</span>
+            <div class="dropdown-content">
+              {% for hosp_name in hospital_names %}
+              <label><input type="checkbox" value='{{ hosp_name }}'>{{ hosp_name }}</label>
+              <input type="hidden" name="selected_hospitals" id="selected_hospitals" value="" required>
+              {% endfor %}
+              <!-- <input type="hidden" name="selected_hospitals" id="selected_hospitals" value=""> -->
+              <!-- <label><input type="checkbox" value="item2"> Item 2</label>
+                        <label><input type="checkbox" value="item3"> Item 3</label> -->
+            </div>
+          </div>
+
+        </div>
+
+        <input type="radio" id="accident" name="bookingType" value="Accident" />
+        <label for="accident">Accident</label><br /><br />
+
+        <!-- <label for="DestinationType">Destination Type:</label>
+          <input type="radio" id="Automatic" name="DestinationType" value="Automatic">
+          <label for="Automatic">Automatic</label>
+          <input type="radio" id="Personalized" name="DestinationType" value="Personalized">
+          <label for="Personalized">Personalized</label><br><br> -->
+
+        <button type="submit">Automatic Hospital Booking</button>
+        <!-- </form> -->
+        <!-- <button type="submit" data-target-page="hospital_booking.html">Manual Hospital Booking</button> -->
+      </form>
+      <br>
+      <a href="{{ url_for('hospital_data_show' )}}"><button type="button">Check Hospital Status</button></a>
+    </div>
+  </div>
+
+  <footer>
+    &copy; Copyright @ LifeSaver Architech
+    <a href="{{ url_for('contactus')}}">Contact Us</a>
+    <a href="{{ url_for('aboutus')}}">About Us</a>
+  </footer>
+
+  <!-- <label for="destination">Destination (Lat, Long):</label>
+    <input type="text" id="destination" placeholder="e.g., 34.0522, -118.2437">
+    <button onclick="showDirection()">Show Direction</button> -->
+
+  <!-- leaflet js -->
+  <!-- <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script> -->
+  <!-- leaflet-routing-machine js -->
+  <!-- <script src="https://unpkg.com/leaflet-routing-machine@3.3.4/dist/leaflet-routing-machine.js"></script> -->
+
+  <!-- leaflet geocoder -->
+  <!-- <script src="https://unpkg.com/leaflet-control-geocoder@1.13.0/dist/Control.Geocoder.js"></script> -->
+
+  <script>
+    // // Map initialization
+    // var map = L.map("map").setView([14.0860746, 100.608406], 6);
+
+    // // OSM layer
+    // var osm = L.tileLayer(
+    //   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    //   {
+    //     attribution:
+    //       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    //   }
+    // );
+    // osm.addTo(map);
+
+    // var marker, circle;
+    // var prevLat, prevLng;
+    // var routeControl; // Define the routeControl variable here
+
+    // if (!navigator.geolocation) {
+    //   console.log("Your browser doesn't support geolocation feature!");
+    // } else {
+    //   navigator.geolocation.watchPosition(getPosition, handleError, {
+    //     enableHighAccuracy: true,
+    //   });
+    // }
+
+    // function getPosition(position) {
+    //   var lat = position.coords.latitude;
+    //   var long = position.coords.longitude;
+    //   var accuracy = position.coords.accuracy;
+
+    //   if (marker) {
+    //     map.removeLayer(marker);
+    //   }
+
+    //   if (circle) {
+    //     map.removeLayer(circle);
+    //   }
+
+    //   if (prevLat !== undefined && prevLng !== undefined) {
+    //     // Calculate the angle between previous and current coordinates
+    //     var angle =
+    //       Math.atan2(lat - prevLat, long - prevLng) * (180 / Math.PI);
+
+    //     // Create a direction arrow icon
+    //     var arrowIcon = L.divIcon({
+    //       className: "direction-arrow",
+    //       iconSize: [20, 20],
+    //       html: '<div style="transform: rotate(' + angle + 'deg);"></div>',
+    //     });
+
+    //     marker = L.marker([lat, long], { icon: arrowIcon });
+    //   } else {
+    //     marker = L.marker([lat, long]);
+    //   }
+
+    //   circle = L.circle([lat, long], { radius: accuracy });
+
+    //   var featureGroup = L.featureGroup([marker, circle]).addTo(map);
+
+    //   map.fitBounds(featureGroup.getBounds());
+
+    //   prevLat = lat;
+    //   prevLng = long;
+
+    //   console.log(
+    //     "Your coordinate is: Lat: " +
+    //     lat +
+    //     " Long: " +
+    //     long +
+    //     " Accuracy: " +
+    //     accuracy
+    //   );
+    // }
+
+    // function handleError(error) {
+    //   console.error("Error getting location:", error);
+    // }
+
+    function getLiveAddress(lat, long) {
+      var latitude = lat;
+      var longitude = long;
+      const latLng = new google.maps.LatLng(lat, long);
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ 'location': latLng }, function (results, status) {
+        if (status === 'OK') {
+          if (results[0]) {
+            document.getElementById('location').value = `${results[0].formatted_address}`;
+          } else {
+            // document.getElementById('loc').innerText = 'Address not found';	
+            return 'Address not found';
+          }
+        } else {
+          // document.getElementById('loc').innerText = 'Geocoder failed due to: ' + status;	
+          return 'Geocoder failed due to: ' + status;
+        }
+      });
+    }
+
+    function getAndFillLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+          var locationInput = document.getElementById("location");
+          var latitudeInput = document.getElementById("latitude");
+          var longitudeInput = document.getElementById("longitude");
+          // var longitudeInput = document.getElementById('longitude');
+
+          var latitude = position.coords.latitude;
+          var longitude = position.coords.longitude;
+
+          latitudeInput.value = latitude;
+          longitudeInput.value = longitude;
+          // longitudeInput.value = longitude;
+        });
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    // Call the function to fill the form on page load
+    window.addEventListener("load", getAndFillLocation);
+    document.addEventListener("DOMContentLoaded", function () {
+      const ambulanceForm = document.getElementById("ambulanceForm");
+
+      // Set the current date and time in the respective input fields
+      const currentDate = new Date();
+      const dateInput = document.getElementById("date");
+      const timeInput = document.getElementById("time");
+
+      // Format the date as "YYYY-MM-DD" and the time as "HH:MM" with leading zeros
+      const formattedDate = currentDate.toISOString().split("T")[0];
+      const formattedTime = currentDate.toTimeString().slice(0, 5);
+
+      dateInput.value = formattedDate;
+      timeInput.value = formattedTime;
+
+      ambulanceForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        // Fetch form values (including the automatically set date and time)
+        // const name = document.getElementById("name").value;
+        // const reason = document.getElementById("reason").value;
+        const phone = document.getElementById("phone").value;
+        // const address = document.getElementById("address").value;
+        const location = document.getElementById("location").value;
+        const date = dateInput.value;
+        const time = timeInput.value;
+        const bookingType = document.querySelector(
+          'input[name="bookingType"]:checked'
+        ).value;
+        // const bookingDetails = `Name: ${name}\nPhone: ${phone}\nLocation: ${location}\nDate: ${date}\nTime: ${time}\nBooking Type: ${bookingType}`;
+        const bookingDetails = `Location: ${location}\nDate: ${date}\nTime: ${time}\nBooking Type: ${bookingType}`;
+        alert("Booking Details:\n" + bookingDetails);
+
+        // // Determine the target page based on which button was clicked
+        // const targetPage = this.querySelector('button[type="submit"]').getAttribute("data-target-page");
+
+        // // Redirect to the target page
+        // window.location.href = targetPage;
+      });
+    });
+
+    // function automatic_book() {
+    //   document.getElementById("myForm").submit();
+    //   window.location.href = "/getwellsoon.html"; // Replace "/target_page" with the actual URL you want to go to
+    // }
+
+    // function manual_book() {
+    //   document.getElementById("myForm").submit();
+    //   window.location.href = "/hospital_booking.html"; // Replace "/target_page" with the actual URL you want to go to
+    // }
+
+    // Get references to the radio buttons
+    var scheduledRadioButton = document.getElementById("scheduled");
+    var accidentRadioButton = document.getElementById("accident");
+    var dropdownDiv = document.getElementById("hospital-dropdown");
+
+    // Add event listener to scheduled radio button
+    scheduledRadioButton.addEventListener("change", function () {
+      if (scheduledRadioButton.checked) {
+        accidentRadioButton.checked = false;
+        dropdownDiv.style.display = "block";
+      }
+    });
+
+    // Add event listener to accident radio button
+    accidentRadioButton.addEventListener("change", function () {
+      if (accidentRadioButton.checked) {
+        scheduledRadioButton.checked = false;
+        dropdownDiv.style.display = "none";
+      }
+    });
+
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    var selectedHospitalsInput = document.getElementById('selected_hospitals');
+
+    checkboxes.forEach(function (checkbox) {
+      checkbox.addEventListener('change', function () {
+        var selectedHospitals = [];
+        checkboxes.forEach(function (cb) {
+          if (cb.checked) {
+            selectedHospitals.push(cb.value);
+          }
+        });
+        selectedHospitalsInput.value = selectedHospitals.join(',');
+      });
+    });
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    var selectedHospitalsInput = document.getElementById('selected_hospitals');
+
+    checkboxes.forEach(function (checkbox) {
+      checkbox.addEventListener('change', function () {
+        var selectedHospitals = [];
+        checkboxes.forEach(function (cb) {
+          if (cb.checked) {
+            selectedHospitals.push(cb.value);
+          }
+        });
+        selectedHospitalsInput.value = selectedHospitals.join(',');
+      });
+    });
+    // var map;
+    // var markers = [];
+    // // var my =[]
+    // var myList;
+    // fetch('/get_list')
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Access the list in JavaScript
+    //     myList = data.result;
+    //     console.log("Inside" + myList)
+    //     initMap(myList);
+    //   })
+    //   .catch(error => console.error('Error:', error));
+
+    // function initMap(val) {
+    //   map1 = new google.maps.Map(document.getElementById('map'), {
+    //     center: { lat: 0, lng: 0 },
+    //     zoom: 2
+    //   });
+    //    // Create a custom marker icon using the image file
+    //    var customMarkerIcon = {
+    //     url: 'https://www.dropbox.com/scl/fi/rgwuk78u85o9u7k0hwhds/ambulance_marker.png?rlkey=qb2omsoc02547dheon9vmkyih&dl=1', // Replace with the actual path to your image
+    //     scaledSize: new google.maps.Size(40, 40), // Adjust the size as needed
+    //   };
+    //   console.log("hello" + val);
+    //   console.log(typeof val);
+    //   val.forEach(function (item) {
+    //     var lat = parseFloat(item[1]);
+    //     var lon = parseFloat(item[2]);
+    //     console.log(item[1])
+    //     console.log(item[2])
+        
+    //     var marker = new google.maps.Marker({
+    //       position: { lat: lat, lng: lon },
+    //       map: map1,
+    //       icon:customMarkerIcon,
+    //       title: 'Device: ' + item[0] + '\nLocation: ' + item[1] + ', ' + item[2]  
+    //     });
+    //     markers.push(marker);
+    //   });
+
+    //   // Center the map based on the average location of devices
+    //   centerMap();
+
+    //   function centerMap() {
+    //     if (markers.length === 0) {
+    //       return;
+    //     }
+
+    //     var bounds = new google.maps.LatLngBounds();
+    //     markers.forEach(function (markers) {
+    //       bounds.extend(markers.getPosition());
+    //     });
+
+    //     map1.fitBounds(bounds);
+    //   }
+    // }
+    var map;
+    var markers = [];
+
+    // Fetch the list of devices from the backend
+    fetch('/get_list')
+      .then(response => response.json())
+      .then(data => {
+        // Access the list in JavaScript
+        const myList = data.result;
+        console.log("Inside "+myList)
+        initMap(myList);
+      })
+      .catch(error => console.error('Error:', error));
+
+    function initMap(val) {
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 0, lng: 0 },
+        zoom: 2
+      });
+      var customMarkerIcon = {
+        url: 'https://www.dropbox.com/scl/fi/rgwuk78u85o9u7k0hwhds/ambulance_marker.png?rlkey=qb2omsoc02547dheon9vmkyih&dl=1', // Replace with the actual path to your image
+        scaledSize: new google.maps.Size(40, 40), // Adjust the size as needed
+      };
+
+      val.forEach(function (item) {
+        const lat = parseFloat(item[1]);
+        const lon = parseFloat(item[2]);
+
+        const marker = new google.maps.Marker({
+          position: { lat:lat, lng:lon },
+          map:map,
+          icon:customMarkerIcon,
+          title: 'Device: ' + item[0] + '\nLocation: ' + item[1] + ', ' + item[2]
+        });
+
+        markers.push(marker);
+      });
+
+      // Center the map based on the average location of devices
+      centerMap();
+    }
+
+    function centerMap() {
+      if (markers.length === 0) {
+        return;
+      }
+
+      const bounds = new google.maps.LatLngBounds();
+      markers.forEach(function (marker) {
+        bounds.extend(marker.getPosition());
+      });
+
+      map.fitBounds(bounds);
+    }
+
+  </script>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+
+
+</body>
+
+</html>

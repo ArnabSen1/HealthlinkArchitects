@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ambulance Driver Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fffafa;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url("https://media.tenor.com/7M84fx_mh20AAAAM/ambulance-ambulanceemoji.gif");
+            background-repeat: no-repeat;
+            background-size: 60%; /* Adjusted the size for visibility */
+            background-position: center;
+        }
+
+        main {
+            background-image: url("https://media.tenor.com/7M84fx_mh20AAAAM/ambulance-ambulanceemoji.gif");
+            background-repeat: no-repeat;
+            background-size: 80%;
+            background-position: center;
+            height: 92vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background-color: #f4f6f7;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            width: 400px; /* Increased the width */
+            text-align: center;
+            padding: 30px;
+            transition: transform 0.3s, border-color 0.3s; /* Add hover effect for transform and border-color */
+            border: 2px solid #333; /* Add a border */
+        }
+
+        .login-container:hover {
+            transform: scale(1.05);
+            border-color: #555; /* Border color on hover */
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        footer {
+            text-align: center;
+            /* margin-top: 20px; */
+            padding: 2rem;
+            background-color: #192024;
+            color: white;
+        }
+
+        footer a {
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        @media screen and (max-width: 768px) and (max-height: 1024px) and (orientation: portrait) {
+            main {
+                min-height: auto;
+            }
+
+            .login-container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            input[type="text"],
+            input[type="password"],
+            input[type="number"] {
+                margin-bottom: 10px;
+            }
+
+            button {
+                font-size: 16px;
+            }
+
+            footer {
+                padding: 1rem;
+            }
+
+            footer a {
+                margin: 5px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+    <div class="login-container">
+        <h2>Ambulance Driver Registration</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li class="flash-message">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="/ambulance_reg">
+            <div class="form-group">
+                <label for="driverName">Name of the Driver:</label>
+                <input type="text" id="driverName" name= "driverName" required>
+                
+                <label for="carNumber">Car Number:</label>
+                <input type="text" id="carNumber" name= "carNumber" required>
+                
+                <label for="driverAge">Age:</label>
+                <input type="number" id="driverAge" name= "driverAge" required>
+                
+                <label for="panNumber">PAN Number:</label>
+                <input type="text" id="panNumber" name= "panNumber" required>
+                
+                <label for="license">Driving License:</label>
+                <input type="text" id="license" name= "license" required>
+
+                <label for="username">User Name:</label>
+                <input type="text" id="username" name="username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+
+                <!-- <label for="Latitude">Latitude:</label> -->
+                <input type="hidden" id="Latitude" name="Latitude" readonly>
+
+                <!-- <label for="password">longiyyu:</label> -->
+                <input type="hidden" id="longitude" name="longitude" readonly>
+
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+    </main>
+    <footer>
+        &copy; Copyright @ LifeSaver Architech
+        <a href="{{ url_for('contactus')}}">Contact Us</a>
+        <a href="{{ url_for('aboutus')}}">About Us</a>
+      </footer>
+
+      <script>
+           if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            console.log(latitude)
+            console.log(longitude)
+            // Set the latitude and longitude values in hidden fields
+            document.getElementById("Latitude").value = latitude;
+            document.getElementById("longitude").value = longitude;
+        });
+    } else {
+        console.log("Geolocation is not available in this browser.");
+    }
+      </script>
+</body>
+</html>

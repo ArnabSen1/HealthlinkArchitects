@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbwtf_dATwlZNIgG6UqcVrPwsFheNK0os
+    &libraries=places"></script>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        background-color: #fff;
+        max-width: 400px;
+        margin: 50px auto;
+        padding: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        text-align: center;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    .form {
+        margin-top: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #555;
+    }
+
+    #result {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+
+    .payment-options {
+        display: none;
+        margin-top: 20px;
+    }
+
+    .payment-option {
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+
+<body>
+    <p style="display: none;">
+        {% if username %}
+            {{username}}
+        {% endif %}
+        {% if password %}
+            {{password}}
+        {% endif %}
+        {% if user_username %}
+            {{user_username}}
+        {% endif %}
+    </p>
+
+    <div class="container">
+        <h1>Payment Portal</h1>
+        <form action="/payment_portal/{{ username }}/{{ password }}/{{ user_username }}" method="POST">
+            <label for="hospitalName">Name:</label>
+            <input type="text" id="hospitalName" name="hospitalName" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        <label for="originInput">Origin:</label>
+        <input type="text" id="originInput" placeholder="Enter origin place" autocomplete="off">
+
+        <label for="destinationInput">Destination:</label>
+        <input type="text" id="destinationInput" placeholder="Enter destination place" value="{{ destination }}"
+            readonly>
+
+        <button id="calculateButton" onclick="calculateDistance()">Calculate</button>
+        <form action="/calculate/{{ username }}/{{ password }}/{{ user_username }}" method="POST">
+
+            <div id="result"></div>
+            <input type="hidden" id="usernameInput" name="username" value="{{username}}">
+            <input type="hidden" id="passwordInput" name="password" value="{{password}}">
+            <input type="hidden" id="user_usernameInput" name="user_username" value="{{user_username}}">
+
+            <input type="hidden" id="resultInput" name="result" value="">
+            <input type="hidden" id="CostInput" name="cost" value="">
+            <!-- <input type="hidden" id="resultInput" name="result" value=""> -->
+            <!-- <button id="calculateButton">Calculate</button> -->
+            <!-- <div id="result"></div>  -->
+
+            <div class="payment-options" id="paymentOptions">
+                <h2>Select a Payment Method:</h2>
+                <div class="payment-option">
+                    <label>
+                        <input type="radio" name="paymentMethod" value="cash">
+                        Pay with Cash
+                    </label>
+                </div>
+                <div class="payment-option">
+                    <label>
+                        <input type="radio" name="paymentMethod" value="upi">
+                        Pay with UPI
+                    </label>
+                </div>
+                <div class="payment-option">
+                    <label>
+                        <input type="radio" name="paymentMethod" value="googlePay">
+                        Pay with Google Pay
+                    </label>
+                </div>
+                <button type="button" id="payButton">Pay</button>
+                <div id="paymentResult"></div>
+                <button type="submit" id="payDoneButton">Payment Done</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function setOriginToCurrentLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const originInput = document.getElementById('originInput');
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const geocoder = new google.maps.Geocoder();
+                    const latlng = { lat: lat, lng: lng };
+
+                    geocoder.geocode({ 'location': latlng }, function (results, status) {
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                originInput.value = results[0].formatted_address;
+                            }
+                        } else {
+                            console.error('Geocoder failed due to: ' + status);
+                        }
+                    });
+                });
+            } else {
+                console.error('Geolocation is not available in this browser.');
+            }
+        }
+
+
+        // Call the function to set the origin to the current location when the page loads
+        setOriginToCurrentLocation();
+
+        function calculateDistance() {
+            const originInput = document.getElementById('originInput');
+            const destinationInput = document.getElementById('destinationInput');
+            const resultDiv = document.getElementById('result');
+            const resultInput = document.getElementById('resultInput');
+            const CostInput = document.getElementById('CostInput')
+            const paymentOptionsDiv = document.getElementById("paymentOptions");
+            // const payDoneButtonDiv = document.getElementById('payDoneButton')
+            const originPlace = originInput.value;
+            const destinationPlace = destinationInput.value;
+
+            if (!originPlace || !destinationPlace) {
+                resultDiv.innerHTML = '<p>Please enter both origin and destination places.</p>';
+                return;
+            }
+
+            const service = new google.maps.DistanceMatrixService();
+
+            const request = {
+                origins: [originPlace],
+                destinations: [destinationPlace],
+                travelMode: google.maps.TravelMode.DRIVING,
+            };
+
+            service.getDistanceMatrix(request, (response, status) => {
+                if (status === 'OK') {
+                    var distance = response.rows[0].elements[0].distance.text;
+                    var duration = response.rows[0].elements[0].duration.text;
+                    var cost = 15.0 * parseFloat(distance.replace(" km", ""));
+                    resultInput.value = distance;
+                    CostInput.value = cost;
+                    resultDiv.innerHTML = `<p>Distance: ${distance}</p><p>Duration: ${duration}</p><p>Cost: $${cost.toFixed(2)}</p>`;
+                    paymentOptionsDiv.style.display = "block";
+                } else {
+                    resultDiv.innerHTML = '<p>Failed to calculate distance and time.</p>';
+                    paymentOptionsDiv.style.display = "none";
+                }
+            });
+        }
+        // document.addEventListener("DOMContentLoaded", function () {
+        //     const calculateButton = document.getElementById("calculateButton");
+        //     // const distanceInput = document.getElementById("distance");
+        //     const resultDiv = document.getElementById("result");
+        //     const paymentOptionsDiv = document.getElementById("paymentOptions");
+
+        //     calculateButton.addEventListener("click", function (event) {
+        //         event.preventDefault(); // Prevent form submission
+
+        //         const distance = parseFloat(distanceInput.value);
+        //         if (!isNaN(distance)) {
+        //             const rate = 10; // 10 rupees per kilometer
+        //             const payment = distance * rate;
+        //             resultDiv.textContent = `Payment Amount: ${payment} rupees`;
+
+        //             // Show payment options after calculating fare
+        //             paymentOptionsDiv.style.display = "block";
+
+        //             // Send data to server
+        //             sendDataToServer(distance);
+        //         } else {
+        //             resultDiv.textContent = "Please enter a valid distance.";
+        //             // Hide payment options if calculation fails
+        //             paymentOptionsDiv.style.display = "none";
+        //         }
+        //     });
+
+        function sendDataToServer(distance) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/payment_portal");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log("Data sent successfully");
+                }
+            };
+            xhr.send(`distance=${distance}`);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const payButton = document.getElementById("payButton");
+            const paymentResultDiv = document.getElementById("paymentResult");
+            const payDoneButton = document.getElementById("payDoneButton");
+
+            payButton.addEventListener("click", function () {
+                const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+                if (selectedMethod) {
+                    const paymentMethod = selectedMethod.value;
+                    paymentResultDiv.textContent = `Selected Payment Method: ${paymentMethod}`;
+
+                    if (paymentMethod === 'googlePay') {
+                        const googlePayImage = new Image();
+                        googlePayImage.src = "https://www.dropbox.com/scl/fi/lo0bl9q8uuk9wllcffzkd/GooglePay_QR.png?rlkey=zcdxhiym47ovjew03a91q87e2&dl=1";
+                        googlePayImage.alt = "QRCODE";
+                        googlePayImage.width = 200;
+                        googlePayImage.height = 200;
+                        paymentResultDiv.innerHTML = "";
+                        googlePayImage.style.display = "block";
+                        paymentResultDiv.appendChild(googlePayImage);
+                    }
+                    payDoneButton.style.display = "block"; // Display the "Payment Done" button
+                } else {
+                    paymentResultDiv.textContent = "Please select a payment method.";
+                    payDoneButton.style.display = "none"; // Hide the "Payment Done" button
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

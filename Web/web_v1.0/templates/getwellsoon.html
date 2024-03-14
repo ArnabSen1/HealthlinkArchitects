@@ -1,0 +1,130 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Well Soon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            background-image: url('https://www.dropbox.com/scl/fi/3sj9eajlddcz5hkwetj32/getwellsoon.jpeg?rlkey=veyw9ex9221bxul6ux1f64p2i&dl=1'); /* Replace 'your-background-image-url.jpg' with the actual URL or path to your background image */
+            background-size: 80%; /* Set the background image size to 50% of the viewport width and height */
+            background-repeat: no-repeat; /* Prevent the background image from repeating */
+            background-attachment: fixed; /* Fixed background image */
+            background-position: center center; /* Center the background image */
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 50px;
+        }
+        .button-container {
+            text-align: center; /* Center align buttons horizontally */
+            margin-top: 20rem; /* Add margin to move the buttons down */
+            margin-right: auto; /* Add margin to move the buttons left */
+        }
+
+        button {
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #555; /* Change background color on hover */
+            transform: scale(1.1); /* Scale up the button on hover */
+        }
+
+        p {
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background-color: #192024;
+            color: white;
+        }
+
+        footer a {
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        /* Media query for screens with a maximum width of 768px, a maximum height of 1024px, and portrait orientation */
+        @media screen and (max-width: 768px) and (max-height: 1024px) and (orientation: portrait) {
+            footer {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+    <p style="display: none;">
+        {% if username %}
+            {{username}}
+        {% endif %}
+        {% if password %}
+            {{password}}
+        {% endif %}
+    </p>
+    <h1>We Hope You Get Well Soon</h1>
+    <form action="/getwellsoon/{{ username }}/{{password}}" method="POST">
+        <input type="hidden" name="username" value="{{ username }}">
+        <input type="hidden" name="password" value="{{ password }}">
+        <input type="hidden" name="action" id="action" value="">
+        <button type="button" name="cancel_booking" onclick="confirmAction('cancel')">Cancel Booking</button>
+        <button type="button" name="rebooking" onclick="confirmAction('rebooking')">ReBooking</button>
+    </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flash-messages">
+                    {% for message in messages %}
+                        <li class="flash-message">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+    <button><a id="Usermap" href="{{url_for('user_map', username=username)}}">Usermap</a></button>
+    <footer>
+        &copy; Copyright @ Get Well Soon
+        <a href="#">Contact Us</a>
+        <a href="#">About Us</a>
+    </footer>
+
+    <script>
+       document.getElementById('action').value=action
+        function confirmAction(action) {
+        if(action=='cancel')
+        {
+            var confirmation = confirm("Are you sure you want to cancel the booking?");
+            if (confirmation) {
+                // If the user confirms, set the action value and submit the form
+                document.getElementById('action').value = action;
+                document.forms[0].submit();  // Submit the form
+            }
+        }else if(action=='rebooking')
+        {
+            var confirmation1=confirm("Are you sure to redirect?")
+            if(confirmation1)
+            {
+                document.getElementById('action').value=action;
+                document.forms[0].submit();
+            }
+        }
+    }
+    </script>
+</body>
+</html>

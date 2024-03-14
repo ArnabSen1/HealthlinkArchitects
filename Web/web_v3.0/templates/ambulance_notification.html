@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- <meta http-equiv="refresh" content="5"> -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+    <style>
+        /* Your existing CSS styles */
+
+        body {
+            background: linear-gradient(135deg, #fff6b7 10%, #f6416c 100%);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            /* Background color for the footer */
+            color: #fff;
+            /* Text color for the footer */
+            padding: 10px 0;
+            /* Add padding to the top and bottom of the footer */
+            text-align: center;
+            /* Center-align the text in the footer */
+            position: absolute;
+            bottom: 0;
+            /* Position the footer at the bottom of the viewport */
+            width: 100%;
+            /* Make the footer span the entire width of the viewport */
+        }
+
+        /* Style for the image container */
+        .image-container {
+            text-align: center;
+        }
+
+        /* Style for the image */
+        .image-container img {
+            max-width: 400%;
+            /* Ensure the image doesn't exceed the container width */
+            height: auto;
+            /* Maintain the image's aspect ratio */
+        }
+
+        /* Style for the photo frame */
+        .photo-frame {
+            /* border: 2px solid #000; */
+            padding: 10px;
+            margin-top: 20px;
+            /* Add some space between the frame and the content above */
+        }
+
+        #liveLocationButton {
+            background-color: #007bff;
+            /* Blue color */
+            color: #fff;
+            /* White text color */
+            border: none;
+        }
+
+        /* Style for the "Update Location" button when it's in the "Stop Updating Location" state */
+        #liveLocationButton.updating {
+            background-color: #dc3545;
+            /* Red color */
+        }
+
+        /* Media query for screens smaller than 768px (typical mobile devices) */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+                /* Decrease font size for readability on small screens */
+            }
+
+            /* Adjust navbar for mobile */
+            .navbar {
+                padding: 10px;
+                /* Add some space to the navbar items */
+            }
+
+            /* Adjust table styles for mobile */
+            table {
+                font-size: 14px;
+                /* Reduce font size for smaller screens */
+            }
+
+            .btn-sm {
+                font-size: 12px;
+                /* Reduce button size for small screens */
+            }
+
+            /* Add padding to container for mobile */
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+    <title>Ambulance Notification Centre</title>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><img src="/crud/logo.svg" height="28px" alt=""></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Notification Centre<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact Us</a>
+                </li>
+            </ul>
+            <!-- <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form> -->
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        <p style="display: none;">
+            {% if username %}
+            {{username}}
+            {% endif %}
+            {% if password %}
+            {{password}}
+            {% endif %}
+        </p>
+
+        <h2>Pending Requests</h2>
+        <table class="table" id="pendingTable">
+            <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in pending_data %}
+                <tr>
+                    <th scope='row'>{{ loop.index }}</th>
+                    <td>{{ row['name'] }}</td>
+                    <td>{{ row['reason'] }}</td>
+                    <td>{{ row['phone'] }}</td>
+                    <td>{{ row['address'] }}</td>
+                    <td>
+                        <a href="{{ url_for('ambulance_accept', user_username=row['user_username'], username=username, password=password) }}"
+                            class='btn btn-sm btn-success'>Accept</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-4">
+        <div class="d-flex align-items-center justify-content-center h-100">
+            <!-- <div class="photo-frame">
+                <div class="image-container">
+                    <img src="https://www.dropbox.com/scl/fi/sxqxrqldgf693sv8i8q8t/ambulance_notification.jpeg?rlkey=9ur3f1lpho285g3z3ze2ris4t&dl=1" alt="Your New Image">
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <hr>
+
+    <div class="container my-4">
+
+        <h2>Accepted Requests</h2>
+        <table class="table" id="acceptedTable">
+            <thead>
+                <tr>
+                    <th scope="col">S.No</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in accepted_data %}
+                <tr>
+                    <th scope='row'>{{ loop.index }}</th>
+                    <td>{{ row['name'] }}</td>
+                    <td>{{ row['reason'] }}</td>
+                    <td>{{ row['phone'] }}</td>
+                    <td>{{ row['address'] }}</td>
+                    <td>
+                        <a href="{{ url_for('getuserLoc', user_username=row['user_username']) }}"
+                            class='btn btn-sm btn-primary'>Go to Patient</a>
+                        <a href="{{ url_for('gethospitalLoc', user_username=row['user_username']) }}"
+                            class='btn btn-sm btn-primary'>Go to Hospital</a>
+                        <a href="{{ url_for('ambulance_email', username=username, password=password, user_username=row['user_username']) }}"
+                            id="sendEmailLink" class='btn btn-sm btn-primary'
+                            data-name="{{ row['user_username'] }}">Send Confirmation</a>
+                        <a href="{{ url_for('ambulance_end', username=username, password=password, user_username=row['user_username']) }}"
+                            class='btn btn-sm btn-primary'>End Trip</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for message in messages %}
+            <li class="flash-message">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+    </div>
+    <form id="locationForm" method="POST"
+        action="{{ url_for('update_location', username=username, password=password) }}">
+        <input type="hidden" id="latitude" name="latitude" readonly>
+        <br>
+        <!-- <label for="longitude">Longitude:</label> -->
+        <input type="hidden" id="longitude" name="longitude" readonly>
+        <br>
+        <button type="submit" class='btn btn-sm btn-primary' onclick="updateLocation">Update Location</button>
+    </form>
+    <script src="https://code.jquery.com/jquery-3.4."></script>
+
+    <script>
+        function updateLocation() {
+            // Use geolocation API to get actual coordinates
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Update the input fields with the latitude and longitude values
+                    document.getElementById("latitude").value = latitude;
+                    document.getElementById("longitude").value = longitude;
+
+                    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+                    // Automatically submit the form after updating the values
+                    document.getElementById("locationForm").submit();
+                });
+            } else {
+                console.error("Geolocation is not available in this browser.");
+            }
+        }
+
+        // Start updating the location on page load
+        updateLocation();
+
+        // Update location every 10 seconds
+        // setInterval(function() {
+        //     location.reload();
+        // }, 10000);
+        // setInterval(updateLocation, 10000);
+
+        // Add an event listener to the "Stop" button
+        // document.getElementById("stopLocationButton").addEventListener("click", function(event){
+        //     event.preventDefault();
+
+        //     isUpdatingLocation=false
+
+        //     document.getElementById('liveLocation Button').textContent="Update location"
+
+        //     alert("Live Location is off ")
+        // })
+
+        // function stopLocationUpdate() {
+        //     isUpdatingLocation = false;
+        //     document.getElementById("liveLocationButton").textContent = "Update Location";
+        // }
+    </script>
+
+
+
+
+</body>
+
+</html>

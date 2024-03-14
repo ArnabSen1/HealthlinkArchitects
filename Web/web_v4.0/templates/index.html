@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Index Page</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbwtf_dATwlZNIgG6UqcVrPwsFheNK0os&libraries=places&callback=initMap" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            /* justify-content: space-between; Add this property */
+            background-color: #f0f0f0; /* Fallback background color */
+            background-image: url('https://www.dropbox.com/scl/fi/fl0j47hdi2i9vuz1mgzha/medical-emergency.jpeg?rlkey=x2f1giwj9lreaz3dv476w84uw&dl=1'); /* Background image URL */
+            background-size: 70%;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+
+        /* Add an overlay with transparency */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust the opacity (0.8 = 80% transparent) */
+            z-index: -1;
+        }
+
+        #intro {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        #intro h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: highlight 3s ease-in-out infinite;
+        }
+
+        @keyframes highlight {
+            0%, 100% {
+                background-color: transparent;
+                color: black;
+            }
+            50% {
+                background-color: #007BFF;
+                color: white;
+            }
+        }
+
+        #intro p {
+            font-size: 25px;
+            margin-bottom: 30px;
+        }
+
+        /* #get-started-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        } */
+
+        /* Style buttons for registration options */
+        /* .registration-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 20px;
+            margin: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        } */
+
+        /* Change button color on hover */
+        /* #get-started-button:hover {
+            background-color: #0056b3;
+        } */
+
+        .analytics {
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        #Red-Alert {
+            padding: 2rem;
+            width: 30rem;
+        }
+        #map {
+            height: 17rem;
+        }
+
+        #Accident-Analytics {
+            padding: 2rem;
+            width: 30rem;
+        }
+
+        canvas {
+            max-width: 30rem;
+            margin: 0 auto;
+            display: block;
+            max-height: 17rem;
+        }
+
+        .overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.5);
+        transition: opacity 200ms;
+        visibility: hidden;
+        opacity: 0;
+        &.light {
+            background: rgba(255,255,255,0.5);
+        }
+        .cancel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            cursor: default;
+        }
+        &:target {
+            visibility: visible;
+            opacity: 1;
+        }
+        }
+
+        .popup {
+            margin: 75px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #666;
+            width: 300px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            position: relative;
+        .light & {
+            border-color: #aaa;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+        }
+        h2 {
+            margin-top: 0;
+            color: #666;
+            font-family: "Trebuchet MS", Tahoma, Arial, sans-serif;
+        }
+        .close {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 20px;
+            right: 20px;
+            opacity: 0.8;
+            transition: all 200ms;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #666;
+            &:hover {
+            opacity: 1;
+            }
+        }
+        .content {
+            max-height: 400px;
+            overflow: auto;
+        }
+        p {
+            margin: 0 0 1em;
+            &:last-child {
+            margin: 0;
+            }
+        }
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 2rem;
+            background-color: #192024;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            color: white;
+            
+        }
+
+        header .register {
+            text-decoration: none;
+            margin: 0 1rem;
+            color: white;
+            position: fixed;
+            right: 0;
+        }
+
+        .dropdown {
+        position: relative;
+        display: inline-block;
+        }
+
+        /* Dropdown button */
+        .dropbtn {
+        background-color: #007BFF;;
+        color: white;
+        padding: 10px 20px;
+        font-size: 20px;
+        margin: 10px;
+        border: none;
+        cursor: pointer;
+        }
+
+        /* Dropdown content (hidden by default) */
+        .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 100px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+        }
+
+        /* Links inside the dropdown */
+        .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        }
+
+        /* Change color of links on hover */
+        .dropdown-content a:hover {
+        background-color: #f1f1f1;
+        }
+
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+        display: block;
+        }
+
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+        background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            background-color: #192024;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin-bottom: 0;
+            color: white;
+        }
+
+        footer a {
+            text-decoration: none;
+            margin: 0 10px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        LOGO HERE
+        <div class="register">
+            <div class="dropdown">
+                <button class="dropbtn">Signup</button>
+                <div class="dropdown-content">
+                    <a class="registration-button" href="#popup1">Patient</a>
+                    <a class="registration-button" href="#popup2">Ambulance</a>
+                    <a class="registration-button" href="#popup3">Hospital</a>
+                </div>
+              </div>
+              <div class="dropdown">
+                <button class="dropbtn">Login</button>
+                <div class="dropdown-content">
+                    <a class="registration-button" href="#popup4">Patient</a>
+                    <a class="registration-button" href="#popup5">Ambulance</a>
+                    <a class="registration-button" href="#popup6">Hospital</a>
+                </div>
+              </div>
+            <!-- <button class="registration-button" onclick="redirectTo('signup')">Sign Up </button>
+            <button class="registration-button" onclick="redirectTo('loginpage')">Login </button> -->
+                <!-- <a class="registration-button" href="#popup1">Sign Up </a>
+                <a class="registration-button" href="#popup2">Login </a> -->
+        </div>
+    </header>
+    <div id="intro">
+        <h1>LifeSaver Connect</h1>
+        <p>Saving Lives...</p>
+    </div>
+    <div class="analytics">
+    <div id="Red-Alert">
+        <h1>Red Alert Zones</h1>
+        <div id="map"></div>
+    </div>
+    <div id="Accident-Analytics">
+        <h1>Accidents Analysis</h1>
+        <canvas id="accidentsChart"></canvas>
+    </div>
+    </div>
+    <div id="popup1" class="overlay">
+        <div class="popup">
+            <h2>Patient Signup</h2>
+            <a class="close" href="#">&times;</a>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                        {% for message in messages %}
+                            <li class="flash-message">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/user_reg">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    
+                    <label for="address">Location:</label>
+                    <input type="text" id="address" name="address" required>
+                    
+                    <label for="userAge">Age:</label>
+                    <input type="number" id="userAge" name="userAge" required>
+
+                    <label for="phone">Phone No.:</label>
+                    <input type="text" id="phone" name="phone" required>
+
+                    <label for="userEmail">Email:</label>
+                    <input type="text" id="userEmail" name="userEmail" required>
+
+                    <label for="username">User Name:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="popup2" class="overlay">
+        <div class="popup">
+            <h2>Ambulance Signup</h2>
+            <a class="close" href="#">&times;</a>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                        {% for message in messages %}
+                            <li class="flash-message">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/ambulance_reg">
+                <div class="form-group">
+                    <label for="driverName">Name of the Driver:</label>
+                    <input type="text" id="driverName" name= "driverName" required>
+                    
+                    <label for="carNumber">Car Number:</label>
+                    <input type="text" id="carNumber" name= "carNumber" required>
+                    
+                    <label for="driverAge">Age:</label>
+                    <input type="number" id="driverAge" name= "driverAge" required>
+                    
+                    <label for="panNumber">PAN Number:</label>
+                    <input type="text" id="panNumber" name= "panNumber" required>
+                    
+                    <label for="license">Driving License:</label>
+                    <input type="text" id="license" name= "license" required>
+
+                    <label for="username">User Name:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <!-- <label for="Latitude">Latitude:</label> -->
+                    <input type="hidden" id="Latitude" name="Latitude" readonly>
+
+                    <!-- <label for="password">longiyyu:</label> -->
+                    <input type="hidden" id="longitude" name="longitude" readonly>
+
+                    <button type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="popup3" class="overlay">
+        <div class="popup">
+            <h2>Hospital Signup</h2>
+            <a class="close" href="#">&times;</a>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class="flash-messages">
+                        {% for message in messages %}
+                            <li class="flash-message">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="/hospital_reg">
+                <div class="form-group">
+                    <label for="inchargeName">Name of the Incharge:</label>
+                    <input type="text" id="inchargeName" name="inchargeName" required>
+                    
+                    <label for="hospitalLocation">Location:</label>
+                    <input type="text" id="hospitalLocation" name="hospitalLocation" required>
+                    
+                    <label for="hospitalName">Name of the Hospital:</label>
+                    <input type="text" id="hospitalName" name="hospitalName" required>
+
+                    <label for="username">User Name:</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+    <div id="popup4" class="overlay">
+        <div class="popup">
+            <h2>Patient Login</h2>
+            <a class="close" href="#">&times;</a>
+            <form method="POST" action="/user_login">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+    
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+    <div id="popup5" class="overlay">
+        <div class="popup">
+            <h2>Ambulance Login</h2>
+            <a class="close" href="#">&times;</a>
+            <form method="POST" action="/ambulance_login">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+    <div id="popup6" class="overlay">
+        <div class="popup">
+            <h2>Hospital Login</h2>
+            <a class="close" href="#">&times;</a>
+            <form method="POST" action="/hospital_login">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+    
+                    <button type="submit">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer>
+        &copy; Copyright @ LifeSaver Architech
+        <a href="{{ url_for('contactus')}}">Contact Us</a>
+        <a href="{{ url_for('aboutus')}}">About Us</a>
+    </footer>
+
+    <script>
+        // Red Alert Map
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 0, lng: 0 },
+                zoom: 2
+            });
+
+            fetch('/get_red_alert_zones')
+                .then(response => response.json())
+                .then(redAlertZones => {
+                    // Iterate over red alert zones and add markers to the map
+                    redAlertZones.forEach(zone => {
+                        new google.maps.Marker({
+                            position: { lat: zone.latitude, lng: zone.longitude },
+                            map: map,
+                            icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                            title: `Red Alert Zone: ${zone.pin_code}`
+                        });
+                    });
+                })
+                .catch(error => console.error('Error fetching red alert zones:', error));
+        }
+
+
+        // Accident Analytics
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/get_accidents_data')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Process data to extract state names for x-axis labels
+                    const processedData = processData(data);
+                    renderChart(processedData);
+                })
+                .catch(error => {
+                    console.error('Error fetching accidents data:', error);
+                    // Handle the error, e.g., display a message to the user
+                });
+        });
+
+        function processData(data) {
+            // Extract state names for x-axis labels
+            const processedData = {
+                labels: Object.keys(data).map(entry => entry.split(' ')[0]),
+                datasets: [{
+                    label: 'Accidents Count',
+                    data: Object.values(data),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            };
+            return processedData;
+        }
+
+        function renderChart(data) {
+            try {
+                const ctx = document.getElementById('accidentsChart').getContext('2d');
+
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        xAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'State'
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Accidents Count'
+                            },
+                            reverse: true  // Set this property to true
+                        }]
+                    }
+                };
+
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: chartOptions
+                });
+            } catch (chartError) {
+                console.error('Error rendering chart:', chartError);
+                // Handle the chart rendering error, e.g., display a message to the user
+            }
+        }
+    </script>
+    
+</body>
+</html>

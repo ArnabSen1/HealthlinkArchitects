@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Location Update</title>
+    <meta http-equiv="refresh" content="10">
+</head>
+
+<body>
+    <h1>Update Location</h1>
+    <form id="locationForm" method="POST" action="/update_location">
+        <label for="username">username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">password:</label>
+        <input type="text" id="password" name="password" required>
+        <!-- <label for="latitude">Latitude:</label> -->
+        <input type="hidden" id="latitude" name="latitude" readonly>
+        <br>
+        <!-- <label for="longitude">Longitude:</label> -->
+        <input type="hidden" id="longitude" name="longitude" readonly>
+        <br>
+        <button type="submit">SUBMIT</button>
+    </form>
+    <script>
+        function updateLocation() {
+            // Use geolocation API to get actual coordinates
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Update the input fields with the latitude and longitude values
+                    document.getElementById("latitude").value = latitude;
+                    document.getElementById("longitude").value = longitude;
+
+                    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+                    // Automatically submit the form after updating the values
+                    document.getElementById("locationForm").submit();
+                });
+            } else {
+                console.error("Geolocation is not available in this browser.");
+            }
+        }
+
+        // Start updating the location on page load
+        updateLocation();
+
+        // Update location every 10 seconds
+        // setInterval(function() {
+        //     location.reload();
+        // }, 10000);
+        setInterval(updateLocation, 10000);
+    </script>
+</body>
+
+</html>

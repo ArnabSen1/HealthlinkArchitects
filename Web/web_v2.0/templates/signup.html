@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Signup Page</title>
+    <!-- <title>Registration Forms</title> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Use 100vh to fill the entire viewport height */
+            background: rgba(500, 500, 500, 0.9); /* Lighter background color with some transparency */
+        }
+
+        main {
+            justify-content: center;
+            align-items: center;
+        }
+        /* Add an overlay with transparency */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black border with 50% opacity */
+            z-index: -1;
+        }
+
+        #intro {
+            text-align: center;
+            color: white; /* Text color inside the black border */
+            padding: 230px; /* Add some padding inside the black border */
+        }
+
+        #intro h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            animation: highlight 3s ease-in-out infinite;
+        }
+
+        @keyframes highlight {
+            0%, 100% {
+                background-color: transparent;
+                color: white;
+            }
+            50% {
+                background-color: #007BFF;
+                color: white;
+            }
+        }
+
+        #intro p {
+            font-size: 25px;
+            margin-bottom: 30px;
+        }
+
+        #get-started-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Style buttons for registration options */
+        .registration-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        /* Set the background image size to 20% of the viewport width and height */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.dropbox.com/scl/fi/lzvetrosnbx37k4c1eg05/ambulance_hospital.jpg?rlkey=lpoz92pgr13rnj26xjkty485r&dl=1');
+            background-size: 76% auto;
+            background-repeat: no-repeat;
+            background-position: center center;
+            z-index: -2;
+        }
+        /* Style prominent and animated buttons */
+        .registration-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: 2px solid #0056b3; /* Add a border */
+            padding: 15px 30px;
+            font-size: 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        /* Add hover effect for the buttons using a more specific selector */
+        .registration-button:hover {
+            background-color: #0056b3; /* Change background color on hover */
+            transform: scale(1.05); /* Scale up the button on hover */
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0; /* Adjust the left and right padding to 0 */
+            background-color: #192024;
+            color: white;
+        }
+
+        footer a {
+            width: 100%;
+            text-decoration: none;
+            margin: 0 10px;
+            color: white;
+        }
+
+        @media screen and (max-width: 768px), (max-height: 1024px), (orientation: portrait) {
+            body::before {
+                background-size: cover; /* Use cover to fit the background image */
+            }
+            body::after {
+                background-size: cover; /* Use cover to fit the background image */
+            }
+            footer {
+                position: fixed; /* Fix the footer to the bottom */
+                bottom: 0; /* Align it to the bottom */
+                width: 100%; /* Make it full-width */
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+    <div id="intro">
+        <!-- <h1>LifeSaver Connect</h1> -->
+        <p>Sign Up Page</p>
+        <h2>Select an option:</h2>
+        <!-- Registration buttons -->
+        <div class="button-container">
+            <button class="registration-button" onclick="redirectTo('user_reg')">User Registration</button>
+            <button class="registration-button" onclick="redirectTo('ambulance_reg')">Ambulance Driver Registration</button>
+            <button class="registration-button" onclick="redirectTo('hospital_reg')">Hospital Registration</button>
+        </div>
+    </div>
+    </main>
+    <footer>
+        &copy; Copyright @ LifeSaver Architech
+        <a href="{{ url_for('contactus')}}">Contact Us</a>
+        <a href="{{ url_for('aboutus')}}">About Us</a>
+      </footer>
+
+    <script>
+        // JavaScript function to show registration options
+
+        // JavaScript function to redirect to the desired registration page
+        function redirectTo(page) {
+            if (page === 'user_reg') {
+                window.location.href = "{{ url_for('user_reg') }}"; // Replace with the actual URL for user registration
+            } else if (page === 'ambulance_reg') {
+                window.location.href = "{{ url_for('ambulance_reg') }}"; // Replace with the actual URL for ambulance registration
+            } else if (page === 'hospital_reg') {
+                window.location.href = "{{ url_for('hospital_reg') }}"; // Replace with the actual URL for hospital registration
+            }
+        }
+    </script>
+    
+</body>
+</html>
